@@ -1,0 +1,13 @@
+.Container {
+  padding: 0 50px;
+}
+
+.Container--Breadcrumb {
+  margin: 16px 0;
+}
+
+.Container--Content {
+  background: #fff;
+  padding: 24px;
+  min-height: 280px;
+}
