@@ -7,15 +7,13 @@ import React, {useMemo} from 'react';
 
 //componente classificação (idade, texto, cor)
 function Cinemas(props) {
-  const {idade} = props;
-  const texto = useMemo(() => _getTexto(idade), [idade]);
-  const cor = useMemo(() => _getCor(idade), [idade]);
-  return <Tag className="" color={cor}>{texto}</Tag>;
+  const {value} = props;
+return <Tag className="Cinemas"></Tag>;
 }
 
 //
 Cinemas.propTypes = {
-  idade: PropTypes.number,
+  value: PropTypes.number,
 };
 
 //radio buttons

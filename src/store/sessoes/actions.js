@@ -1,7 +1,13 @@
 import {REQUEST, SUCCESS, FAILURE, createRequestType, action} from '../actions';
 
 export const LISTAR = createRequestType('SESSOES_LISTAR');
-export const SELECT_CINEMA = createRequestType('SELECT_CINEMA');
+export const LISTAR_CINEMAS = createRequestType('CINEMAS_LISTAR');
+export const SALVAR = createRequestType('SESSOES_SALVAR');
+export const EXCLUIR = createRequestType('SESSOES_EXCLUIR');
+export const ABRIR = 'SESSOES_ABRIR';
+export const ABRIR_CINEMA = 'SESSOES_ABRIR_CINEMA';
+export const FECHAR = 'SESSOES_FECHAR';
+export const LIMPAR_ERRO = 'SESSOES_LIMPAR_ERRO';
 
 export const listar = {
   request: () => action(LISTAR[REQUEST]),
@@ -9,7 +15,27 @@ export const listar = {
   failure: (erro) => action(LISTAR[FAILURE], {erro}),
 };
 
-export const select = (selected) => action(SELECT_CINEMA,selected);
+export const listarCinemas = {
+  
+  request: () => action(LISTAR_CINEMAS[REQUEST]),
+  success: (listaCinemas) => action(LISTAR_CINEMAS[SUCCESS], listaCinemas),
+  failure: (erro) => action(LISTAR_CINEMAS[FAILURE], {erro}),
+};
+
+export const salvar = {
+  request: (filme) => action(SALVAR[REQUEST], filme),
+  success: (filme) => action(SALVAR[SUCCESS], filme),
+  failure: (erro) => action(SALVAR[FAILURE], {erro}),
+};
+
+export const excluir = {
+  request: (id) => action(EXCLUIR[REQUEST], {id}),
+  success: (id) => action(EXCLUIR[SUCCESS], {id}),
+  failure: (erro) => action(EXCLUIR[FAILURE], {erro}),
+};
+
+export const abrir = (sessao) => action(ABRIR, sessao);
+export const abrirCinema = (cinema) => action(ABRIR_CINEMA, cinema);
 
 export const fechar = () => action(FECHAR);
 

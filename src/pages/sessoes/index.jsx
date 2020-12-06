@@ -10,14 +10,17 @@ import * as Actions from '../../store/sessoes/actions';
 function SessoesPage(props) {
   const dispatch = useDispatch();
   const model = useSelector(state => state.sessoes);
-  const cinema = model.cinema;
+  const {erro, cinemaAberto,itemAberto} = model;
   const [form] = Form.useForm();
 
+ 
 
-  // abrir = useCallback(filme => dispatch(Actions.abrir(filme)), [dispatch]);
-  // fechar = useCallback(() => dispatch(Actions.fechar()), [dispatch]);
-  //const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAberto.id)), [dispatch, itemAberto]);
- // const salvar = useCallback(filme => dispatch(Actions.salvar.request({...itemAberto, ...filme})), [dispatch, itemAberto]);
+  const abrir = useCallback(sessao => dispatch(Actions.abrir(sessao)), [dispatch]);
+  const fechar = useCallback(() => dispatch(Actions.fechar()), [dispatch]);
+  const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAberto.id)), [dispatch, itemAberto]);
+  const salvar = useCallback(sessao => dispatch(Actions.salvar.request({...itemAberto, ...sessao})), [dispatch, itemAberto]);
+  
+
 
   const renderItem = useCallback(
       item => {
@@ -77,7 +80,7 @@ function SessoesPage(props) {
   return (
       <Container breadcrumb={['Sessões']}>
 
-        <h1>Sessões  {cinema}</h1>
+        <h1>Sessões  {cinemaAberto}</h1>
             <Cinemas.Select />
 
               <br/>
@@ -96,7 +99,7 @@ function SessoesPage(props) {
         />
 
         <Drawer
-            title={cinema ? 'Alterar Sessão' : 'Nova Sessão'}
+            title={itemAberto ? 'Alterar Sessão' : 'Nova Sessão'}
             placement="right"
             width={512}
             closable={false}
@@ -105,7 +108,7 @@ function SessoesPage(props) {
 
             footer={drawerFooter}
         >
-          <Form layout='vertical' initialValues={cinema} form={form} >
+          <Form layout='vertical' initialValues={itemAberto} form={form} >
             <Form.Item label="Fime" name="filme" rules={[{required: true}]}>
               <Input />
             </Form.Item>

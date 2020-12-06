@@ -5,12 +5,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import Classificacao from '../../components/classificacao';
 import Container from '../../components/container';
-import * as Actions from '../../store/filmes/actions';
+import * as Actions from '../../store/cinemas/actions';
 
 function CinemasPage(props) {
   const dispatch = useDispatch();
-  const model = useSelector(state => state.filmes);
-  const {erro, carregando, itemAberto} = model;
+  const model = useSelector(state => state.cinemas);
+  const {erro, carregando, itemAbertoCinema} = model;
   const lista = [...model.lista, {}];
   const [form] = Form.useForm();
 
@@ -24,30 +24,27 @@ function CinemasPage(props) {
 
   useEffect(() => {
     form.resetFields();
-  }, [form, itemAberto]);
+  }, [form, itemAbertoCinema]);
 
   const abrir = useCallback(filme => dispatch(Actions.abrir(filme)), [dispatch]);
   const fechar = useCallback(() => dispatch(Actions.fechar()), [dispatch]);
-  const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAberto.id)), [dispatch, itemAberto]);
-  const salvar = useCallback(filme => dispatch(Actions.salvar.request({...itemAberto, ...filme})), [dispatch, itemAberto]);
+  const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAbertoCinema.id)), [dispatch, itemAbertoCinema]);
+  const save = useCallback(filme => dispatch(Actions.salvar.request({...itemAbertoCinema, ...filme})), [dispatch, itemAbertoCinema]);
 
   const renderItem = useCallback(
       item => {
         if (item.id) {
           const description =
               <p>
-                <Classificacao idade={item.classificacao} />
-                {
-                  item.genero + ', ' +
-                  item.duracao + ' minutos, ' +
-                  item.lancamento.format('YYYY')
-                }
+
+                  {item.cidade} , {item.estado}
+                
               </p>;
           return (
               <List.Item key={item.id} onClick={() => abrir(item)}>
                 <Card hoverable>
                   <Card.Meta title={item.nome} description={description} />
-                  <p>{item.sinopse}</p>
+                  <p>Salas: {item.salas}</p>
                 </Card>
               </List.Item>
           );
@@ -92,8 +89,8 @@ function CinemasPage(props) {
   ), [excluir, fechar, form]);
 
   return (
-      <Container breadcrumb={['Cinemas']}>
-        <h1>Cinemas ({model.lista.length})</h1>
+      <Container breadcrumb={['Cinema']}>
+        <h1>Cinema ({model.lista.length})</h1>
         <List
             loading={carregando}
             grid={{
@@ -107,25 +104,30 @@ function CinemasPage(props) {
             renderItem={renderItem}
         />
         <Drawer
-            title={itemAberto?.id ? 'Alterar Cinema' : 'Novo Cinema'}
+            title={itemAbertoCinema?.id ? 'Alterar Cinema' : 'Novo Cinema'}
             placement="right"
             width={512}
             closable={false}
             maskClosable={false}
             onClose={fechar}
-            visible={itemAberto !== null}
+            visible={itemAbertoCinema !== null}
             footer={drawerFooter}
         >
-          <Form layout='vertical' initialValues={itemAberto} form={form} onFinish={salvar}>
+          <Form layout='vertical' initialValues={itemAbertoCinema} form={form} onFinish={save}>
             <Form.Item label="Nome" name="nome" rules={[{required: true}]}>
               <Input />
             </Form.Item>
             <Form.Item label="Cidade" name="cidade" rules={[{required: true}]}>
               <Input />
             </Form.Item>
-             <Form.Item label="Estado" name="estado" rules={[{required: true}]}>
-               <Input />
-             </Form.Item>
+            <Form.Item label="Estado" name="estado" rules={[{required: true}]}>
+              <Input />
+            </Form.Item>
+            <Form.Item label="Salas" name="salas" rules={[{required: true}]}>
+              <InputNumber min={1} max={999} maxLength={3} />
+            </Form.Item>
+            
+            
           </Form>
         </Drawer>
       </Container>

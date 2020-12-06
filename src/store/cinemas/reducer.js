@@ -6,13 +6,13 @@ const INITIAL_STATE = {
   erro: null,
   carregando: false,
   lista: [],
-  listaCinemas: [],
-  itemAberto: null,
-  cinemaAberto: null,
+  itemAbertoCinema: null,
 };
 
+//reducer de filmes
 export default function(state = INITIAL_STATE, action) {
   const {type, payload} = action;
+
   //verifica qual ações foi solicitada
   //atualiza os estados
   switch (type) {
@@ -35,31 +35,13 @@ export default function(state = INITIAL_STATE, action) {
       newState.carregando = false;
       return newState;
     }
-    case Actions.LISTAR_CINEMAS[REQUEST]: {
-      const newState = {...state};
-      newState.erro = null;
-      newState.carregando = true;
-      return newState;
-    }
-    case Actions.LISTAR_CINEMAS[SUCCESS]: {
-      console.log(payload);
-      const newState = {...state};
-      newState.carregando = false;
-      newState.listaCinemas = payload;
-      return newState;
-    }
-    case Actions.LISTAR_CINEMAS[FAILURE]: {
-      const newState = {...state};
-      newState.erro = payload.erro;
-      newState.carregando = false;
-      return newState;
-    }
-    case Actions.SALVAR[REQUEST]: {
+
+    case Actions.SALVAR_CINEMA[REQUEST]: {
       const newState = {...state};
       newState.erro = null;
       return newState;
     }
-    case Actions.SALVAR[SUCCESS]: {
+    case Actions.SALVAR_CINEMA[SUCCESS]: {
       const newItem = {...payload};
 
       const newState = {...state};
@@ -69,10 +51,10 @@ export default function(state = INITIAL_STATE, action) {
         newState.lista[index] = newItem;
       else
         newState.lista.push(newItem);
-        newState.itemAberto = null;
+        newState.itemAbertoCinema = null;
       return newState;
     }
-    case Actions.SALVAR[FAILURE]: {
+    case Actions.SALVAR_CINEMA[FAILURE]: {
       const newState = {...state};
       newState.erro = payload.erro;
       return newState;
@@ -89,7 +71,7 @@ export default function(state = INITIAL_STATE, action) {
       const index = newState.lista.findIndex(({id}) => id === payload.id);
       if (index >= 0)
         newState.lista.splice(index, 1);
-      newState.itemAberto = null;
+      newState.itemAbertoCinema = null;
       return newState;
     }
     case Actions.EXCLUIR[FAILURE]: {
@@ -100,26 +82,13 @@ export default function(state = INITIAL_STATE, action) {
 
     case Actions.ABRIR: {
       const newState = {...state};
-      newState.itemAberto = payload;
-      return newState;
-    }
-
-    case Actions.ABRIR_CINEMA: {
-      const newState = {...state};
-      newState.cinemaAberto = payload;
+      newState.itemAbertoCinema = payload;
       return newState;
     }
 
     case Actions.FECHAR: {
       const newState = {...state};
-      newState.itemAberto = null;
-      return newState;
-    }
-
-    case Actions.FECHAR: {
-      const newState = {...state};
-      newState.itemAberto = null;
-      newState.cinemaAberto = null;
+      newState.itemAbertoCinema = null;
       return newState;
     }
 

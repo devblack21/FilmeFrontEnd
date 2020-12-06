@@ -1,5 +1,5 @@
-import {_cor, _idades, _texto} from './_utils';
-import {Select,Option} from 'antd';
+
+import {Select,Option,Form} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
 import React, {useCallback, useEffect, useMemo} from 'react';
 import * as Actions from '../../store/sessoes/actions';
@@ -10,26 +10,37 @@ function _Select(props) {
 
   const {value} = props;
   const { Option } = Select;
+
   const dispatch = useDispatch();
   const model = useSelector(state => state.sessoes);
-  const cinema = model;
-  const select = useCallback(selected => dispatch(Actions.select(selected)), [dispatch]);
+  const {erro, cinemaAberto} = model;
+  const lista = [...model.listaCinemas, {}];
+  const [form] = Form.useForm();
+
+
+  useEffect(() => {
+    dispatch(Actions.listarCinemas.request());
+  }, [dispatch]);
+
+
+  const abrirCinema = useCallback(selected => dispatch(Actions.abrirCinema(selected)), [dispatch]);
   const handleProvinceChange = value => {
-      select(value);
+      abrirCinema(value);
   };
 
   return (
                 <Select
+                
                    placeholder="Selecione um Cinema"
                    style={{ width: '20%' }}
-                   value={value}
+                   value={cinemaAberto}
                    onChange={handleProvinceChange}
                    >
-                   {_idades.map(item => (
-                     <Select.Option key={item} value={item} >
-                       {item}
-                     </Select.Option>
-                   ))}
+                     {lista.map(item => (
+                       
+                        <Option key={item.id}  value={item.nome}>{item.nome}</Option>
+                       
+                    )) .filter((item) => item.key !== null)}
                  </Select>
 
     );
