@@ -7,7 +7,7 @@ import * as Actions from './actions';
 
 function* listarCinemas() {
 
-console.log('cinemas');
+
   try {
     const res = yield call(axios.get, '/cinemas');
     yield put(Actions.listarCinemas.success(res.data));
@@ -31,6 +31,7 @@ function* salvar({payload}) {
     if (id)
       yield call(axios.put, `/sessoes/${id}`, values);
     else {
+      alert('salvando');
       const res = yield call(axios.post, '/sessoes', values);
       id = res.data.id;
     }
