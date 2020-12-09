@@ -28,12 +28,12 @@ function FilmesPage(props) {
 
   const abrir = useCallback(filme => dispatch(Actions.abrir(filme)), [dispatch]);
   const fechar = useCallback(() => dispatch(Actions.fechar()), [dispatch]);
-  const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAberto.id)), [dispatch, itemAberto]);
+  const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAberto.idFilme)), [dispatch, itemAberto]);
   const salvar = useCallback(filme => dispatch(Actions.salvar.request({...itemAberto, ...filme})), [dispatch, itemAberto]);
 
   const renderItem = useCallback(
       item => {
-        if (item.id) {
+        if (item.idFilme) {
           const description =
               <p>
                 <Classificacao idade={item.classificacao} />
@@ -44,7 +44,7 @@ function FilmesPage(props) {
                 }
               </p>;
           return (
-              <List.Item key={item.id} onClick={() => abrir(item)}>
+              <List.Item key={item.idFilme} onClick={() => abrir(item)}>
                 <Card hoverable>
                   <Card.Meta title={item.nome} description={description} />
                   <p>{item.sinopse}</p>
@@ -107,7 +107,7 @@ function FilmesPage(props) {
             renderItem={renderItem}
         />
         <Drawer
-            title={itemAberto?.id ? 'Alterar Filme' : 'Novo Filme'}
+            title={itemAberto?.idFilme ? 'Alterar Filme' : 'Novo Filme'}
             placement="right"
             width={512}
             closable={false}

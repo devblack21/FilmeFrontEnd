@@ -1,9 +1,8 @@
 import {showError} from '../../utils';
 import {PlusOutlined} from '@ant-design/icons';
-import {Option,Button, Card, DatePicker,TimePicker, Drawer, Form, Input, InputNumber, List, Popconfirm,AutoComplete} from 'antd';
+import {Select,Option,Button, Card, DatePicker,TimePicker, Drawer, Form, Input, InputNumber, List, Popconfirm,AutoComplete} from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
 import React, {useCallback, useEffect, useMemo, useRef} from 'react';
-import Cinemas from '../../components/cinemas';
 import Container from '../../components/container';
 import * as Actions from '../../store/sessoes/actions';
 
@@ -12,8 +11,9 @@ function SessoesPage(props) {
   const model = useSelector(state => state.sessoes);
   const {erro,carregando, cinemaAberto,itemAberto} = model;
   const lista = [...model.lista, {}];
+  const listaCinemas = [...model.listaCinemas, {}];
   const [form] = Form.useForm();
-  const { Option } = AutoComplete;
+  const { Option } = Select;
 
   useEffect(() => {
     if (erro) showError(erro, form);
@@ -24,38 +24,51 @@ function SessoesPage(props) {
   }, [dispatch]);
 
   useEffect(() => {
+    dispatch(Actions.listarCinemas.request());
+  }, [dispatch]);
+
+  useEffect(() => {
     form.resetFields();
   }, [form, itemAberto]);
 
 
   const abrir = useCallback(sessao => dispatch(Actions.abrir(sessao)), [dispatch]);
   const fechar = useCallback(() => dispatch(Actions.fechar()), [dispatch]);
-  const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAberto.id)), [dispatch, itemAberto]);
+  const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAberto.idSessao)), [dispatch, itemAberto]);
   const salvar = useCallback(sessao => dispatch(Actions.salvar.request({...itemAberto, ...sessao})), [dispatch, itemAberto]);
-  
+  const listar = useCallback((value) => dispatch(Actions.listarPorCinema.request(cinemaAberto)),[dispatch,cinemaAberto]);
+  const abrirCinema = useCallback(selected => dispatch(Actions.abrirCinema(selected)), [dispatch]);
 
+  const handleProvinceChange = value => {
+      abrirCinema(value);
+      listar(2);
+  };
 
   const renderItem = useCallback(
     item => {
-      if (item.id) {
+      if (item.idSessao) {
         const description =
             <p>
+               Sala: {item.sala} | Dia: {item.diaSemana} | Horario: {item.horario}  
              
             </p>;
         return (
-            <List.Item key={item.id} onClick={() => abrir(item)}>
+            <List.Item key={item.idSessao} onClick={() => abrir(item)} >
               <Card hoverable>
-                <Card.Meta title={item.nome} description={description} />
-                <p>{item.sinopse}</p>
+                <Card.Meta title={item.filme.nome} description={description} />
+
+                  {item.cinema.nome}
+                
               </Card>
             </List.Item>
+            
         );
       }
 
       return (
           <List.Item key={-1} onClick={() => abrir({})}>
             <Button type='link' icon={<PlusOutlined />} size='large'>
-              Novo Filme
+              Nova Sessão
             </Button>
           </List.Item>
       );
@@ -91,47 +104,26 @@ const drawerFooter = useMemo(() => (
 ), [excluir, fechar, form]);
 
 
-const options = [
-  {
-    id: 1,
-    value: 'Burns Bay Road',
-  },
-  {
-    id: 2,
-    value: 'Downing Street',
-  },
-  {
-    id: 3,
-    value: 'Wall Street',
-  },
-];
-
-const handleSearch = (value) => {
-  
-    value = value ;
-};
-
-
-const Complete = () => (
-  <AutoComplete
-  style={{
-    width: 200,
-  }}
-  onSearch={handleSearch}
-  placeholder="Selecione o Filme..."
->
-  {options.map((filme) => (
-    <Option key={filme.id} value={filme.id} >
-      {filme.value}
-    </Option>
-  ))}
-</AutoComplete>
-);
-
 return (
-    <Container breadcrumb={['Filmes']}>
-      <h1>Filmes ({model.lista.length}) </h1>
-      <Cinemas.Select/>
+  
+    <Container breadcrumb={['Sessões']}>
+      
+      <h1>Sessões ({model.lista.length}) </h1>
+     
+      <Select      label="Cinema"
+                   placeholder="Selecione um Cinema"
+                   style={{ width: '20%' }}
+                   value={cinemaAberto}
+                   onChange={handleProvinceChange}
+                   >
+                     {model.listaCinemas.map(item => (
+                       
+                        <Option key={item.idCinema}  value={item.idCinema}>{item.nome}</Option>
+                       
+                    )) .filter((item) => item.key !== null)}
+                 </Select>
+
+      <br/>  <br/>
       <List
           loading={carregando}
           grid={{
@@ -144,8 +136,9 @@ return (
           dataSource={lista}
           renderItem={renderItem}
       />
+
       <Drawer
-          title={itemAberto?.id ? 'Alterar Filme' : 'Novo Filme'}
+          title={itemAberto?.idSessao ? 'Alterar Filme' : 'Novo Filme'}
           placement="right"
           width={512}
           closable={false}
@@ -154,23 +147,34 @@ return (
           visible={itemAberto !== null}
           footer={drawerFooter}
       >
+        
         <Form layout='vertical' initialValues={itemAberto} form={form} onFinish={salvar} >
-          
+        
           <Form.Item label="Dia da Semana" name="diaSemana" rules={[{required: true}]}>
-            <Input />
+          <Select placeholder="Selecione um Cinema" style={{ width: '100%' }}>
+                                          
+                <Option value="SEGUNDA">Segunda-Feira</Option>
+                <Option value="TERCA">Terça-Feira</Option>
+                <Option value="QUARTA">Quarta-Feira</Option>
+                <Option value="QUINTA">Quinta-Feira</Option>
+                <Option value="SEXTA">Sexta-Feira</Option>
+                <Option value="SABADO">Sabado</Option>
+                <Option value="DOMINGO">Domingo</Option>
+    
+          </Select>
           </Form.Item>
-          <Form.Item label="Cinema" name="cinema"  value={cinemaAberto} >
-            <Input defaultValue={cinemaAberto}  disabled/>
+          <Form.Item label="Cinema" name="cinema">
+          <Input/>
           </Form.Item>
-          <Form.Item label="Filme" name="filme" >
-          <Complete />
+          <Form.Item label="Filme" name="filme">
+          <Input />
           </Form.Item>
           <Form.Item label="Horario" name="horario" rules={[{required: true}]}>
-            <TimePicker  format="HH:mm" />
+            <Input format="HH:mm" />
           </Form.Item>
           <Form.Item label="Sala" name="sala" rules={[{required: true}]}>
-              <InputNumber min={1} max={999} maxLength={3} />
-            </Form.Item>
+            <InputNumber min={1} max={999} maxLength={3} />
+          </Form.Item>
       
         </Form>
       </Drawer>

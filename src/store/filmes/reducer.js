@@ -16,6 +16,7 @@ export default function(state = INITIAL_STATE, action) {
   //verifica qual ações foi solicitada
   //atualiza os estados
   switch (type) {
+    
 
     case Actions.LISTAR[REQUEST]: {
       const newState = {...state};
@@ -35,6 +36,7 @@ export default function(state = INITIAL_STATE, action) {
     case Actions.LISTAR[FAILURE]: {
       const newState = {...state};
       newState.erro = payload.erro;
+      console.log("erro");
       newState.carregando = false;
       return newState;
     }
@@ -50,7 +52,7 @@ export default function(state = INITIAL_STATE, action) {
 
       const newState = {...state};
       newState.lista = [...newState.lista];
-      const index = newState.lista.findIndex(({id}) => id === newItem.id);
+      const index = newState.lista.findIndex(({idFilme}) => idFilme === newItem.idFilme);
       if (index >= 0)
         newState.lista[index] = newItem;
       else
@@ -72,7 +74,7 @@ export default function(state = INITIAL_STATE, action) {
     case Actions.EXCLUIR[SUCCESS]: {
       const newState = {...state};
       newState.lista = [...newState.lista];
-      const index = newState.lista.findIndex(({id}) => id === payload.id);
+      const index = newState.lista.findIndex(({idFilme}) => idFilme === payload.idFilme);
       if (index >= 0)
         newState.lista.splice(index, 1);
       newState.itemAberto = null;

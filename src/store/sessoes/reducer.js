@@ -1,3 +1,4 @@
+import { Alert } from 'antd';
 import moment from 'moment';
 import {FAILURE, REQUEST, SUCCESS} from '../actions';
 import * as Actions from './actions';
@@ -17,7 +18,48 @@ export default function(state = INITIAL_STATE, action) {
   //atualiza os estados
   switch (type) {
 
+    case Actions.LISTAR_CINEMA[REQUEST]: {
+     
+      const newState = {...state};
+      newState.erro = null;
+      newState.carregando = true;
+      return newState;
+    }
+    case Actions.LISTAR_CINEMA[SUCCESS]: {
+      const newState = {...state};
+      newState.carregando = false;
+      newState.lista = payload;
+      return newState;
+    }
+    case Actions.LISTAR_CINEMA[FAILURE]: {
+      const newState = {...state};
+      newState.erro = payload.erro;
+      newState.carregando = false;
+      return newState;
+    }
+
+    case Actions.LISTAR_CINEMAS[REQUEST]: {
+     
+      const newState = {...state};
+      newState.erro = null;
+      newState.carregando = true;
+      return newState;
+    }
+    case Actions.LISTAR_CINEMAS[SUCCESS]: {
+      const newState = {...state};
+      newState.carregando = false;
+      newState.listaCinemas = payload;
+      return newState;
+    }
+    case Actions.LISTAR_CINEMAS[FAILURE]: {
+      const newState = {...state};
+      newState.erro = payload.erro;
+      newState.carregando = false;
+      return newState;
+    }
+
     case Actions.LISTAR[REQUEST]: {
+     
       const newState = {...state};
       newState.erro = null;
       newState.carregando = true;
@@ -35,25 +77,7 @@ export default function(state = INITIAL_STATE, action) {
       newState.carregando = false;
       return newState;
     }
-    case Actions.LISTAR_CINEMAS[REQUEST]: {
-      const newState = {...state};
-      newState.erro = null;
-      newState.carregando = true;
-      return newState;
-    }
-    case Actions.LISTAR_CINEMAS[SUCCESS]: {
-      console.log(payload);
-      const newState = {...state};
-      newState.carregando = false;
-      newState.listaCinemas = payload;
-      return newState;
-    }
-    case Actions.LISTAR_CINEMAS[FAILURE]: {
-      const newState = {...state};
-      newState.erro = payload.erro;
-      newState.carregando = false;
-      return newState;
-    }
+    
     case Actions.SALVAR[REQUEST]: {
       const newState = {...state};
       newState.erro = null;
@@ -64,7 +88,7 @@ export default function(state = INITIAL_STATE, action) {
 
       const newState = {...state};
       newState.lista = [...newState.lista];
-      const index = newState.lista.findIndex(({id}) => id === newItem.id);
+      const index = newState.lista.findIndex(({idSessao}) => idSessao === newItem.idSessao);
       if (index >= 0)
         newState.lista[index] = newItem;
       else
@@ -86,7 +110,7 @@ export default function(state = INITIAL_STATE, action) {
     case Actions.EXCLUIR[SUCCESS]: {
       const newState = {...state};
       newState.lista = [...newState.lista];
-      const index = newState.lista.findIndex(({id}) => id === payload.id);
+      const index = newState.lista.findIndex(({idSessao}) => idSessao === payload.idSessao);
       if (index >= 0)
         newState.lista.splice(index, 1);
       newState.itemAberto = null;
@@ -119,7 +143,6 @@ export default function(state = INITIAL_STATE, action) {
     case Actions.FECHAR: {
       const newState = {...state};
       newState.itemAberto = null;
-      newState.cinemaAberto = null;
       return newState;
     }
 

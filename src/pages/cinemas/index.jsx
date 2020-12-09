@@ -28,16 +28,17 @@ function CinemasPage(props) {
 
   const abrir = useCallback(filme => dispatch(Actions.abrir(filme)), [dispatch]);
   const fechar = useCallback(() => dispatch(Actions.fechar()), [dispatch]);
-  const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAbertoCinema.id)), [dispatch, itemAbertoCinema]);
+  const excluir = useCallback(() => dispatch(Actions.excluir.request(itemAbertoCinema.idCinema)), [dispatch, itemAbertoCinema]);
   const save = useCallback(filme => dispatch(Actions.salvar.request({...itemAbertoCinema, ...filme})), [dispatch, itemAbertoCinema]);
 
   const renderItem = useCallback(
       item => {
-        if (item.id) {
+        if (item.idCinema) {
           const description =
               <p>
 
                   {item.cidade} , {item.estado}
+                  
                 
               </p>;
           return (
@@ -104,7 +105,7 @@ function CinemasPage(props) {
             renderItem={renderItem}
         />
         <Drawer
-            title={itemAbertoCinema?.id ? 'Alterar Cinema' : 'Novo Cinema'}
+            title={itemAbertoCinema?.idCinema ? 'Alterar Cinema' : 'Novo Cinema'}
             placement="right"
             width={512}
             closable={false}

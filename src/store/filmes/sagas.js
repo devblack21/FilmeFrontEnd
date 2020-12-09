@@ -3,6 +3,7 @@ import {all, call, put, takeLatest} from 'redux-saga/effects';
 import {FAILURE, REQUEST} from '../actions';
 import * as Actions from './actions';
 
+
 //consumindo a api
 
 function* listar() {
@@ -16,24 +17,24 @@ function* listar() {
 
 function* salvar({payload}) {
   try {
-    let {id, ...values} = payload;
-    if (id)
-      yield call(axios.put, `/filmes/${id}`, values);
+    let {idFilme, ...values} = payload;
+    if (idFilme)
+      yield call(axios.put, `/filmes/${idFilme}`, values);
     else {
       const res = yield call(axios.post, '/filmes', values);
-      id = res.data.id;
+      idFilme = res.data.idFilme;
     }
-    const {data} = yield call(axios.get, `/filmes/${id}`);
+    const {data} = yield call(axios.get, `/filmes/${idFilme}`);
     yield put(Actions.salvar.success(data));
   } catch (e) {
     yield put(Actions.salvar.failure(e));
   }
 }
 
-function* excluir({payload: {id}}) {
+function* excluir({payload: {idFilme}}) {
   try {
-    yield call(axios.delete, `/filmes/${id}`);
-    yield put(Actions.excluir.success(id));
+    yield call(axios.delete, `/filmes/${idFilme}`);
+    yield put(Actions.excluir.success(idFilme));
   } catch (e) {
     yield put(Actions.excluir.failure(e));
   }

@@ -2,12 +2,20 @@ import {REQUEST, SUCCESS, FAILURE, createRequestType, action} from '../actions';
 
 export const LISTAR = createRequestType('SESSOES_LISTAR');
 export const LISTAR_CINEMAS = createRequestType('CINEMAS_LISTAR');
+export const LISTAR_CINEMA = createRequestType('LISTAR_CINEMA');
 export const SALVAR = createRequestType('SESSOES_SALVAR');
 export const EXCLUIR = createRequestType('SESSOES_EXCLUIR');
 export const ABRIR = 'SESSOES_ABRIR';
 export const ABRIR_CINEMA = 'SESSOES_ABRIR_CINEMA';
 export const FECHAR = 'SESSOES_FECHAR';
 export const LIMPAR_ERRO = 'SESSOES_LIMPAR_ERRO';
+
+
+export const listarPorCinema = {
+  request: () => action(LISTAR_CINEMA[REQUEST]),
+  success: (lista) => action(LISTAR_CINEMA[SUCCESS], lista),
+  failure: (erro) => action(LISTAR_CINEMA[FAILURE], {erro}),
+};
 
 export const listar = {
   request: () => action(LISTAR[REQUEST]),
