@@ -31,6 +31,36 @@ function* listarPorCinema() {
   }
 }
 
+function* retornarCinema() {
+  try {
+    const estado = yield select(state => state.sessoes);
+    //if(cinemaAberto){
+      if(estado.cinemaDigitado){
+        const res = yield call(axios.get, `/cinemas/${estado.cinemaDigitado}`);
+        yield put(Actions.retornarCinema.success(res.data));
+      }
+      
+   // }
+  } catch (e) {
+    yield put(Actions.retornarCinema.failure(e));
+  }
+}
+
+function* retornarFilme() {
+  try {
+    const estado = yield select(state => state.sessoes);
+    //if(cinemaAberto){
+      if(estado.filmeDigitado){
+        const res = yield call(axios.get, `/filmes/${estado.filmeDigitado}`);
+        yield put(Actions.retornarFilme.success(res.data));
+      }
+      
+   // }
+  } catch (e) {
+    yield put(Actions.retornarFilme.failure(e));
+  }
+}
+
 function* listar() {
     try {
   
@@ -47,9 +77,6 @@ function* salvar({payload}) {
   try {
     
     let {idSessao, ...values} = payload;
-    //payload.cinema = yield call(axios.get, `/cinemas/${payload.cinema}`);
-    //payload.filme = yield call(axios.get, `/filmes/${payload.filme}`);
-   // alert(payload.cinema.nome);
 
     if (idSessao){
      
@@ -84,6 +111,8 @@ export default function* () {
   yield all([
     takeLatest(Actions.LISTAR_CINEMA[REQUEST], listarPorCinema),
     takeLatest(Actions.LISTAR_CINEMAS[REQUEST], listarCinemas),
+    takeLatest(Actions.RETORNAR_CINEMA[REQUEST], retornarCinema),
+    takeLatest(Actions.RETORNAR_FILME[REQUEST], retornarFilme),
     takeLatest(Actions.LISTAR[REQUEST], listar),
     takeLatest(Actions.SALVAR[REQUEST], salvar),
     takeLatest(Actions.EXCLUIR[REQUEST], excluir),

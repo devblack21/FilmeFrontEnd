@@ -10,6 +10,8 @@ const INITIAL_STATE = {
   listaCinemas: [],
   itemAberto: null,
   cinemaAberto: null,
+  cinemaDigitado: null,
+  filmeDigitado: null,
 };
 
 export default function(state = INITIAL_STATE, action) {
@@ -58,6 +60,46 @@ export default function(state = INITIAL_STATE, action) {
       return newState;
     }
 
+    case Actions.RETORNAR_CINEMA[REQUEST]: {
+     
+      const newState = {...state};
+      newState.erro = null;
+      //newState.carregando = true;
+      return newState;
+    }
+    case Actions.RETORNAR_CINEMA[SUCCESS]: {
+      const newState = {...state};
+      newState.carregando = false;
+      newState.itemAberto.cinema = payload;
+      return newState;
+    }
+    case Actions.RETORNAR_CINEMA[FAILURE]: {
+      const newState = {...state};
+      newState.erro = payload.erro;
+      newState.carregando = false;
+      return newState;
+    }
+
+    case Actions.RETORNAR_FILME[REQUEST]: {
+     
+      const newState = {...state};
+      newState.erro = null;
+      //newState.carregando = true;
+      return newState;
+    }
+    case Actions.RETORNAR_FILME[SUCCESS]: {
+      const newState = {...state};
+      newState.carregando = false;
+      newState.itemAberto.filme = payload;
+      return newState;
+    }
+    case Actions.RETORNAR_FILME[FAILURE]: {
+      const newState = {...state};
+      newState.erro = payload.erro;
+      newState.carregando = false;
+      return newState;
+    }
+
     case Actions.LISTAR[REQUEST]: {
      
       const newState = {...state};
@@ -69,6 +111,10 @@ export default function(state = INITIAL_STATE, action) {
       const newState = {...state};
       newState.carregando = false;
       newState.lista = payload;
+      newState.lista.map(item  => {
+        item.nomeCinema = item.cinema.nome;
+        item.nomeFilme = item.filme.nome;
+      });
       return newState;
     }
     case Actions.LISTAR[FAILURE]: {
@@ -84,13 +130,26 @@ export default function(state = INITIAL_STATE, action) {
       return newState;
     }
     case Actions.SALVAR[SUCCESS]: {
-      const newItem = {...payload};
 
+      const newItem = {...payload};
+   
       const newState = {...state};
+      
       newState.lista = [...newState.lista];
+    
       const index = newState.lista.findIndex(({idSessao}) => idSessao === newItem.idSessao);
-      if (index >= 0)
-        newState.lista[index] = newItem;
+   
+      if (index >= 0){
+        if(newItem.cinema.nome !== newState.lista[index].nomeFilme){
+          newState.lista.splice(index,1);
+        }else{
+          newState.lista[index] = newItem;
+          newState.lista.map(item  => {
+            item.nomeCinema = item.cinema.nome;
+            item.nomeFilme = item.filme.nome;
+          });
+        }
+      }
       else
         newState.lista.push(newItem);
         newState.itemAberto = null;
@@ -125,6 +184,8 @@ export default function(state = INITIAL_STATE, action) {
     case Actions.ABRIR: {
       const newState = {...state};
       newState.itemAberto = payload;
+      newState.itemAberto.cinema = newState.itemAberto.cinema.idCinema;
+      newState.itemAberto.filme = newState.itemAberto.filme.idFilme;
       return newState;
     }
 
@@ -133,6 +194,21 @@ export default function(state = INITIAL_STATE, action) {
       newState.cinemaAberto = payload;
       return newState;
     }
+
+    case Actions.CINEMA_DIGITADO: {
+      const newState = {...state};
+      newState.cinemaDigitado = payload;
+      
+      return newState;
+    }
+
+    case Actions.FILME_DIGITADO: {
+      const newState = {...state};
+      newState.filmeDigitado = payload;
+      
+      return newState;
+    }
+
 
     case Actions.FECHAR: {
       const newState = {...state};

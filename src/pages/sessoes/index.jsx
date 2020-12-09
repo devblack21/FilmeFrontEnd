@@ -9,25 +9,25 @@ import * as Actions from '../../store/sessoes/actions';
 function SessoesPage(props) {
   const dispatch = useDispatch();
   const model = useSelector(state => state.sessoes);
-  const {erro,carregando, cinemaAberto,itemAberto} = model;
+  const {erro,carregando, cinemaAberto,itemAberto,cinemaDigitado,filmeDigitado} = model;
   const lista = [...model.lista, {}];
   const listaCinemas = [...model.listaCinemas, {}];
   const [form] = Form.useForm();
   const { Option } = Select;
 
+
   useEffect(() => {
+
     if (erro) showError(erro, form);
   }, [erro, form]);
 
-  useEffect(() => {
-    dispatch(Actions.listar.request());
-  }, [dispatch]);
 
   useEffect(() => {
     dispatch(Actions.listarCinemas.request());
   }, [dispatch]);
 
   useEffect(() => {
+    
     form.resetFields();
   }, [form, itemAberto]);
 
@@ -38,15 +38,41 @@ function SessoesPage(props) {
   const salvar = useCallback(sessao => dispatch(Actions.salvar.request({...itemAberto, ...sessao})), [dispatch, itemAberto]);
   const listar = useCallback((value) => dispatch(Actions.listarPorCinema.request(cinemaAberto)),[dispatch,cinemaAberto]);
   const abrirCinema = useCallback(selected => dispatch(Actions.abrirCinema(selected)), [dispatch]);
-
+  const cinemaDigitad = useCallback(selected => dispatch(Actions.cinemaDigitado(selected)), [dispatch]);
+  const filmeDigitad = useCallback(selected => dispatch(Actions.filmeDigitado(selected)), [dispatch]);
+  const retornarCinema = useCallback(selected => dispatch(Actions.retornarCinema.request(selected)), [dispatch]);
+  const retornarFilme = useCallback(selected => dispatch(Actions.retornarFilme.request(selected)), [dispatch]);
+  
   const handleProvinceChange = value => {
       abrirCinema(value);
       listar(2);
   };
 
+  const handleCinema = (e) =>  {
+    if(itemAberto){
+   
+      cinemaDigitad(e.target.value);
+      retornarCinema();
+
+    }
+    
+};
+
+const handleFilme = (e) =>  {
+  if(itemAberto){
+ 
+    filmeDigitad(e.target.value);
+    retornarFilme();
+  }
+  
+};
+
   const renderItem = useCallback(
     item => {
+      
       if (item.idSessao) {
+      
+      
         const description =
             <p>
                Sala: {item.sala} | Dia: {item.diaSemana} | Horario: {item.horario}  
@@ -55,9 +81,10 @@ function SessoesPage(props) {
         return (
             <List.Item key={item.idSessao} onClick={() => abrir(item)} >
               <Card hoverable>
-                <Card.Meta title={item.filme.nome} description={description} />
+                <Card.Meta title= {item.nomeFilme} description={description} />
 
-                  {item.cinema.nome}
+                  {item.nomeCinema}
+                 
                 
               </Card>
             </List.Item>
@@ -162,11 +189,15 @@ return (
                 <Option value="DOMINGO">Domingo</Option>
     
           </Select>
+          
           </Form.Item>
-          <Form.Item label="Cinema" name="cinema">
-          <Input/>
+          <label>Cinema: {itemAberto?.cinema?.nome == null ? itemAberto?.nomeCinema: itemAberto?.cinema?.nome} {}<br/></label>
+          
+          <Form.Item  id="cinema"  name="cinema" onChange={handleCinema}>
+          <Input />
           </Form.Item>
-          <Form.Item label="Filme" name="filme">
+          <label>Filme: {itemAberto?.filme?.nome == null ? itemAberto?.nomeFilme: itemAberto?.filme?.nome}<br/></label>
+          <Form.Item id="filme" name="filme"  onChange={handleFilme}>
           <Input />
           </Form.Item>
           <Form.Item label="Horario" name="horario" rules={[{required: true}]}>
