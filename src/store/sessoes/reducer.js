@@ -140,13 +140,14 @@ export default function(state = INITIAL_STATE, action) {
       const index = newState.lista.findIndex(({idSessao}) => idSessao === newItem.idSessao);
    
       if (index >= 0){
-        if(newItem.cinema.nome !== newState.lista[index].nomeFilme){
+        if(newItem.cinemaid !== newState.lista[index].idRefresh){
           newState.lista.splice(index,1);
         }else{
           newState.lista[index] = newItem;
           newState.lista.map(item  => {
             item.nomeCinema = item.cinema.nome;
             item.nomeFilme = item.filme.nome;
+            item.idRefresh = item.cinema.idCinema;
           });
         }
       }
@@ -184,8 +185,8 @@ export default function(state = INITIAL_STATE, action) {
     case Actions.ABRIR: {
       const newState = {...state};
       newState.itemAberto = payload;
-      newState.itemAberto.cinema = newState.itemAberto.cinema.idCinema;
-      newState.itemAberto.filme = newState.itemAberto.filme.idFilme;
+      newState.itemAberto.cinemaid = newState.itemAberto.cinema.idCinema;
+      newState.itemAberto.filmeid = newState.itemAberto.filme.idFilme;
       return newState;
     }
 

@@ -46,7 +46,7 @@ export default function(state = INITIAL_STATE, action) {
 
       const newState = {...state};
       newState.lista = [...newState.lista];
-      const index = newState.lista.findIndex(({id}) => id === newItem.id);
+      const index = newState.lista.findIndex(({idCinema}) => idCinema === newItem.idCinema);
       if (index >= 0)
         newState.lista[index] = newItem;
       else
@@ -68,7 +68,7 @@ export default function(state = INITIAL_STATE, action) {
     case Actions.EXCLUIR[SUCCESS]: {
       const newState = {...state};
       newState.lista = [...newState.lista];
-      const index = newState.lista.findIndex(({id}) => id === payload.id);
+      const index = newState.lista.findIndex(({idCinema}) => idCinema === payload.idCinema);
       if (index >= 0)
         newState.lista.splice(index, 1);
       newState.itemAbertoCinema = null;

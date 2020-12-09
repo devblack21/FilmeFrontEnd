@@ -193,11 +193,11 @@ return (
           </Form.Item>
           <label>Cinema: {itemAberto?.cinema?.nome == null ? itemAberto?.nomeCinema: itemAberto?.cinema?.nome} {}<br/></label>
           
-          <Form.Item  id="cinema"  name="cinema" onChange={handleCinema}>
+          <Form.Item  id="cinema"  name="cinemaid" onChange={handleCinema}>
           <Input />
           </Form.Item>
           <label>Filme: {itemAberto?.filme?.nome == null ? itemAberto?.nomeFilme: itemAberto?.filme?.nome}<br/></label>
-          <Form.Item id="filme" name="filme"  onChange={handleFilme}>
+          <Form.Item id="filme" name="filmeid"  onChange={handleFilme}>
           <Input />
           </Form.Item>
           <Form.Item label="Horario" name="horario" rules={[{required: true}]}>
